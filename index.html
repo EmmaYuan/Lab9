@@ -1,72 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 9</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 9</title>
 
-  <style>
-    button {
-      margin: 3px;
-    }
-
-    input[type="number"] {
-      width: 60px;
-    }
-
-    output {
-      border: 1px solid gray;
-      display: block;
-      height: 18px;
-      margin-top: 5px;
-      padding: 5px;
-      width: 240px;
-    }
-  </style>
+    <style>
+        button {
+            margin: 3px;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+        }
+        
+        output {
+            border: 1px solid gray;
+            display: block;
+            height: 18px;
+            margin-top: 5px;
+            padding: 5px;
+            width: 240px;
+        }
+    </style>
 </head>
+
 <body>
-  <fieldset>
-    <legend>Error Calculator</legend>
-    <input type="number" name="first-num" id="first-num" />
-    <select name="operator" id="operator">
+    <fieldset>
+        <legend>Error Calculator</legend>
+        <input type="number" name="first-num" id="first-num" />
+        <select name="operator" id="operator">
       <option>+</option>
       <option>-</option>
       <option>*</option>
       <option>/</option>
     </select>
-    <input type="number" name="second-num" id="second-num" />
-    <button id="calculate">Calculate</button>
-    <br />
-    <output></output>
-  </fieldset>
+        <input type="number" name="second-num" id="second-num" />
+        <button id="calculate">Calculate</button>
+        <br />
+        <output></output>
+    </fieldset>
 
-  <section id="error-btns">
-    <button>Console Log Demo</button>
-    <button>Console Error Demo</button>
-    <button>Console Dir</button>
-    <button>Console dirxml</button>
-    <button>Console Group Start</button>
-    <button>Console Group End</button>
-    <button>Console Table</button>
-    <button>Start Timer</button>
-    <button>End Timer</button>
-    <button>Console Trace</button>
-    <button>Trigger a Global Error</button>
-  </section>
+    <section id="error-btns">
+        <button>Console Log Demo</button>
+        <button>Console Error Demo</button>
+        <button>Console Dir</button>
+        <button>Console dirxml</button>
+        <button>Console Group Start</button>
+        <button>Console Group End</button>
+        <button>Console Table</button>
+        <button>Start Timer</button>
+        <button>End Timer</button>
+        <button>Console Trace</button>
+        <button>Trigger a Global Error</button>
+    </section>
 
-  <script>
-    let calculateBtn = document.querySelector('#calculate');
-    calculateBtn.addEventListener('click', () => {
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+    <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+    <script>
+        window.TrackJS && TrackJS.install({
+            token: "aa607a89e2cd428fbcacdada3f46dc7e"
+                // for more configuration options, see https://docs.trackjs.com
+        });
+    </script>
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
-    // TODO - Make buttons functional
-  </script>
+
+    <script>
+        let calculateBtn = document.querySelector('#calculate');
+        calculateBtn.addEventListener('click', () => {
+            let output = document.querySelector('output');
+            let firstNum = document.querySelector('#first-num').value;
+            let secondNum = document.querySelector('#second-num').value;
+            let operator = document.querySelector('#operator').value;
+            try {
+                output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+            } catch (err) {
+                console.error('Calculator Error');
+            } finally {
+                console.log('Finally');
+            }
+        });
+
+        let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+
+        errorBtns[0].addEventListener('click', () => {
+            console.log("Console Log Demo");
+            TrackJS.track("Testing TrackJS!");
+        });
+
+        errorBtns[1].addEventListener('click', () => {
+            console.error("Console Error Demo");
+        });
+
+        errorBtns[2].addEventListener('click', () => {
+            console.dir(errorBtns[2]);
+        });
+
+        errorBtns[3].addEventListener('click', () => {
+            console.dirxml(document.body);
+        });
+
+        errorBtns[4].addEventListener('click', () => {
+            console.group('Log Group');
+        });
+
+        errorBtns[5].addEventListener('click', () => {
+            console.groupEnd();
+        });
+
+        errorBtns[6].addEventListener('click', () => {
+            console.table([{
+                name: "sanji",
+                hair_color: "yellow"
+            }, {
+                name: "zoro",
+                hair_color: "green"
+            }, {
+                name: "luffy",
+                hair_color: "black"
+            }, {
+                name: "chopper",
+                hair_color: "n/a"
+            }]);
+        });
+
+        errorBtns[7].addEventListener('click', () => {
+            console.log("Timer Started!");
+            console.time();
+        });
+
+        errorBtns[8].addEventListener('click', () => {
+            console.log("Timer Ended!");
+            console.timeEnd();
+        });
+
+        errorBtns[9].addEventListener('click', () => {
+            const traceTest = () => {
+                deep();
+            };
+            const deep = () => {
+                deeper();
+            };
+            const deeper = () => {
+                deepest();
+            };
+            const deepest = () => {
+                console.trace();
+            };
+            traceTest();
+        });
+
+        class Err extends Error {
+            constructor(message) {
+                super(message);
+                this.name = "Err"
+            }
+        }
+
+        errorBtns[10].addEventListener('click', () => {
+            throw new Err("Error Found!");
+        });
+
+        var num = 1;
+        try {
+            num.toPrecision(10000);
+        } catch (err) {
+            throw new Err(err.name);
+        }
+
+        window.onerror = function() {
+            TrackJS.track('Testing TrackJS!');
+            console.log("Error Found!");
+            return false;
+        }
+    </script>
 </body>
+
 </html>
